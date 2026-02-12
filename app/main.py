@@ -18,7 +18,7 @@ def health():
     """健康检查端点，用于Railway监控和保活"""
     return jsonify({
         'status': 'ok',
-        'app': 'moonraise',
+        'app': 'moonrise',
         'version': '1.0.0'
     })
 

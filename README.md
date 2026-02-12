@@ -39,7 +39,7 @@
 ### 1. 克隆或下载项目
 
 ```bash
-cd moonraise
+cd moonrise
 ```
 
 ### 2. 创建虚拟环境（推荐）
@@ -80,7 +80,7 @@ http://localhost:5000
 ## 项目结构
 
 ```
-moonraise/
+moonrise/
 ├── app/                        # 应用主目录
 │   ├── __init__.py            # Flask应用工厂
 │   ├── main.py                # 路由和API

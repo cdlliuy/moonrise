@@ -4,7 +4,7 @@ class Config:
     """应用程序配置类"""
 
     # Flask配置
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-moonraise-2024'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-moonrise-2024'
 
     # 时区配置
     DEFAULT_TIMEZONE = 'Asia/Shanghai'

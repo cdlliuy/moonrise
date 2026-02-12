@@ -33,7 +33,7 @@ Railway有两种方式配置按需启动：
 1. **登录Railway** - https://railway.app/
 
 2. **打开您的项目**
-   - 找到moonraise项目并点击
+   - 找到moonrise项目并点击
 
 3. **进入Settings**
    - 点击您的服务（Service）
@@ -145,7 +145,7 @@ Railway会自动应用新配置。
 @bp.route('/health')
 def health():
     """健康检查端点，用于Railway预热"""
-    return {'status': 'ok', 'app': 'moonraise'}
+    return {'status': 'ok', 'app': 'moonrise'}
 ```
 
 Railway可以定期ping这个端点，保持应用活跃。
