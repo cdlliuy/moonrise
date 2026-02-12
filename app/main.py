@@ -13,6 +13,16 @@ from app import cache
 bp = Blueprint('main', __name__)
 
 
+@bp.route('/health')
+def health():
+    """健康检查端点，用于Railway监控和保活"""
+    return jsonify({
+        'status': 'ok',
+        'app': 'moonraise',
+        'version': '1.0.0'
+    })
+
+
 @bp.route('/')
 def index():
     """主页"""
