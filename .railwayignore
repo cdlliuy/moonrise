@@ -1,0 +1,44 @@
+# Python虚拟环境
+venv/
+env/
+ENV/
+
+# Python缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code
+.claude/
+
+# 测试
+tests/
+.pytest_cache/
+.coverage
+
+# 文档（部署时不需要）
+*.md
+README.md
+USAGE.md
+PROJECT_SUMMARY.md
+手机访问方案建议.md
+
+# 本地启动脚本（部署时不需要）
+start.bat
+start.sh
+start.ps1
+
+# 其他
+.DS_Store
+Thumbs.db

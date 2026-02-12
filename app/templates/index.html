@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div x-data="moonApp()" x-init="init()" class="space-y-8">
+    <!-- 控制面板 -->
+    <div class="bg-gray-800 rounded-lg shadow-xl p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 城市选择 -->
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">选择城市</label>
+                <select x-model="selectedCity" @change="loadMonthData()"
+                        class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% for city in cities %}
+                    <option value="{{ city.id }}">{{ city.name }} ({{ city.province }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- 年份选择 -->
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">年份</label>
+                <input type="number" x-model.number="selectedYear" @change="loadMonthData()"
+                       class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       min="2000" max="2100">
+            </div>
+
+            <!-- 月份选择 -->
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">月份</label>
+                <select x-model.number="selectedMonth" @change="loadMonthData()"
+                        class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="1">1月</option>
+                    <option value="2">2月</option>
+                    <option value="3">3月</option>
+                    <option value="4">4月</option>
+                    <option value="5">5月</option>
+                    <option value="6">6月</option>
+                    <option value="7">7月</option>
+                    <option value="8">8月</option>
+                    <option value="9">9月</option>
+                    <option value="10">10月</option>
+                    <option value="11">11月</option>
+                    <option value="12">12月</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 月份导航按钮 -->
+        <div class="flex justify-between items-center mt-4">
+            <button @click="previousMonth()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                ← 上个月
+            </button>
+            <span class="text-lg font-semibold" x-text="`${selectedYear}年${selectedMonth}月`"></span>
+            <button @click="nextMonth()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                下个月 →
+            </button>
+        </div>
+    </div>
+
+    <!-- 加载状态 -->
+    <div x-show="loading" class="text-center py-12">
+        <div class="inline-block w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full loading"></div>
+        <p class="mt-4 text-gray-400">正在计算月相数据...</p>
+    </div>
+
+    <!-- 月历网格 -->
+    <div x-show="!loading && monthData" class="bg-gray-800 rounded-lg shadow-xl p-6">
+        <h2 class="text-2xl font-bold mb-6 text-center">
+            <span x-text="monthData ? monthData.city.name : ''"></span>
+            <span x-text="` - ${selectedYear}年${selectedMonth}月月相日历`"></span>
+        </h2>
+
+        <!-- 星期标题 -->
+        <div class="calendar-grid mb-2">
+            <div class="text-center font-semibold text-red-400">日</div>
+            <div class="text-center font-semibold">一</div>
+            <div class="text-center font-semibold">二</div>
+            <div class="text-center font-semibold">三</div>
+            <div class="text-center font-semibold">四</div>
+            <div class="text-center font-semibold">五</div>
+            <div class="text-center font-semibold text-red-400">六</div>
+        </div>
+
+        <!-- 日历格子 -->
+        <div class="calendar-grid">
+            <!-- 填充开始空格 -->
+            <template x-for="blank in startDayOfWeek" :key="'blank-' + blank">
+                <div class="aspect-square"></div>
+            </template>
+
+            <!-- 日期单元格 -->
+            <template x-for="day in monthData?.days" :key="day.date">
+                <div class="bg-gray-700 rounded-lg p-3 calendar-day cursor-pointer hover:bg-gray-600"
+                     @click="selectDay(day)">
+                    <!-- 日期和农历 -->
+                    <div class="text-sm font-bold mb-1" x-text="day.day"></div>
+                    <div class="text-xs text-gray-400 mb-2" x-text="day.lunar.day_name"></div>
+
+                    <!-- 月相图标 -->
+                    <div class="text-3xl text-center mb-1" x-text="day.phase_emoji"></div>
+
+                    <!-- 月相名称 -->
+                    <div class="text-xs text-center text-blue-300 mb-1" x-text="day.phase_name"></div>
+
+                    <!-- 光照比例 -->
+                    <div class="text-xs text-center text-gray-400 mb-1">
+                        <span x-text="Math.round(day.illumination)"></span>%
+                    </div>
+
+                    <!-- 月升时间 -->
+                    <div class="text-xs text-center">
+                        <span class="text-yellow-400">↑</span>
+                        <span x-text="day.moonrise || '---'"></span>
+                    </div>
+
+                    <!-- 月落时间 -->
+                    <div class="text-xs text-center">
+                        <span class="text-purple-400">↓</span>
+                        <span x-text="day.moonset || '---'"></span>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- 选中日期的详细信息 -->
+    <div x-show="selectedDayData" class="bg-gray-800 rounded-lg shadow-xl p-6">
+        <h3 class="text-xl font-bold mb-4">选中日期详情</h3>
+
+        <div x-show="selectedDayData" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 左侧：月相可视化 -->
+            <div class="text-center">
+                <div class="text-8xl mb-4" x-text="selectedDayData?.phase_emoji"></div>
+                <h4 class="text-2xl font-bold text-blue-400 mb-2" x-text="selectedDayData?.phase_name"></h4>
+                <p class="text-gray-400 mb-4">
+                    光照比例：<span class="text-white font-bold" x-text="selectedDayData ? Math.round(selectedDayData.illumination) : 0"></span>%
+                </p>
+                <p class="text-sm text-gray-400">
+                    相位角：<span x-text="selectedDayData ? selectedDayData.phase_angle.toFixed(1) : 0"></span>°
+                </p>
+            </div>
+
+            <!-- 右侧：时间信息 -->
+            <div class="space-y-4">
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <h5 class="font-semibold mb-2">📅 日期信息</h5>
+                    <p class="text-sm">公历：<span class="text-blue-300" x-text="selectedDayData?.date"></span></p>
+                    <p class="text-sm">农历：<span class="text-blue-300" x-text="selectedDayData?.lunar.formatted"></span></p>
+                </div>
+
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <h5 class="font-semibold mb-2">🌅 月升月落时间</h5>
+                    <p class="text-sm">
+                        月升：<span class="text-yellow-400 font-bold" x-text="selectedDayData?.moonrise || '无'"></span>
+                    </p>
+                    <p class="text-sm">
+                        月落：<span class="text-purple-400 font-bold" x-text="selectedDayData?.moonset || '无'"></span>
+                    </p>
+                </div>
+
+                <div class="bg-blue-900 bg-opacity-30 border border-blue-700 rounded-lg p-4">
+                    <h5 class="font-semibold mb-2 text-blue-300">💡 天文知识</h5>
+                    <p class="text-xs text-gray-300" x-show="selectedDayData?.phase_name === '满月'">
+                        满月时，太阳、地球、月亮呈一条直线，月亮在地球的另一侧。因此满月总是在日落时分从东方升起，日出时分从西方落下。
+                    </p>
+                    <p class="text-xs text-gray-300" x-show="selectedDayData?.phase_name === '新月'">
+                        新月时，月亮位于太阳和地球之间，几乎与太阳同时升落，因此我们看不到月亮（或只能看到很细的月牙）。
+                    </p>
+                    <p class="text-xs text-gray-300" x-show="selectedDayData?.phase_name === '上弦月'">
+                        上弦月时，月亮、地球、太阳呈直角。上弦月在中午升起，午夜落下，傍晚时在南方天空可见。
+                    </p>
+                    <p class="text-xs text-gray-300" x-show="selectedDayData?.phase_name === '下弦月'">
+                        下弦月时，月亮在午夜升起，中午落下，黎明前在南方天空可见。
+                    </p>
+                    <p class="text-xs text-gray-300" x-show="!['满月', '新月', '上弦月', '下弦月'].includes(selectedDayData?.phase_name)">
+                        月亮每天的升起时间比前一天延迟约50分钟，这是因为月亮每天绕地球运行约12度，相当于地球自转的0.8小时。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 错误提示 -->
+    <div x-show="error" class="bg-red-900 bg-opacity-50 border border-red-700 rounded-lg p-4 text-center">
+        <p class="text-red-300" x-text="error"></p>
+    </div>
+</div>
+{% endblock %}
