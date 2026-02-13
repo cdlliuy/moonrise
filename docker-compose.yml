@@ -1,0 +1,14 @@
+# Docker Compose for local testing
+version: '3.8'
+
+services:
+  moonrise:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DEPLOYMENT_PLATFORM=local
+      - PORT=8080
+    restart: unless-stopped

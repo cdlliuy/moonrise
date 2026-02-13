@@ -1,0 +1,36 @@
+# Azure Container Apps Configuration
+# API Version: 2023-05-01
+
+properties:
+  managedEnvironmentId: /subscriptions/{subscription-id}/resourceGroups/moonrise-rg/providers/Microsoft.App/managedEnvironments/moonrise-env
+  configuration:
+    ingress:
+      external: true
+      targetPort: 8080
+      allowInsecure: false
+      traffic:
+        - weight: 100
+          latestRevision: true
+    secrets: []
+    registries: []
+  template:
+    revisionSuffix: ''
+    containers:
+      - name: moonrise
+        image: {registry}/{image}:{tag}
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+        env:
+          - name: DEPLOYMENT_PLATFORM
+            value: azure
+          - name: PORT
+            value: '8080'
+    scale:
+      minReplicas: 0
+      maxReplicas: 3
+      rules:
+        - name: http-scaling
+          http:
+            metadata:
+              concurrentRequests: '10'

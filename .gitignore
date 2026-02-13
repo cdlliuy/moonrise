@@ -55,3 +55,7 @@ htmlcov/
 
 # Claude Code
 .claude/
+
+# Azure
+.azure/
+azure-pipelines.yml

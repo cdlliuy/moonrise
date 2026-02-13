@@ -1,0 +1,61 @@
+# Git
+.git/
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code
+.claude/
+
+# Tests
+tests/
+.pytest_cache/
+.coverage
+
+# Documentation (not needed in container)
+*.md
+!README.md
+
+# Local scripts (not needed in container)
+start.bat
+start.sh
+start.ps1
+
+# Azure deployment scripts (not needed in container)
+azure/
+
+# Railway config (not needed for Azure deployment)
+Procfile
+railway.json
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Ephemeris files (will be downloaded at runtime if needed)
+*.bsp
+
+# Other
+*.log
+.env
