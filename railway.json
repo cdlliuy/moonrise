@@ -4,7 +4,6 @@
     "builder": "DOCKERFILE"
   },
   "deploy": {
-    "startCommand": "gunicorn -w 4 -b 0.0.0.0:${PORT:-8080} --timeout 120 --access-logfile - --error-logfile - run:app",
     "numReplicas": 1,
     "sleepOnIdle": true,
     "restartPolicyType": "ON_FAILURE",
