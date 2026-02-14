@@ -42,7 +42,7 @@ EXPOSE 8080
 
 # Health check (optional - can be disabled for Railway)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health').read()" || exit 1
+    CMD python -c "import urllib.request, os; urllib.request.urlopen(f'http://localhost:{os.environ.get(\"PORT\", 8080)}/health').read()" || exit 1
 
 # Run with gunicorn
 # Use shell form to allow environment variable expansion
