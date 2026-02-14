@@ -32,6 +32,7 @@ ENV PATH=/root/.local/bin:$PATH
 COPY app/ ./app/
 COPY config.py .
 COPY run.py .
+COPY gunicorn.conf.py .
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -44,6 +45,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
     CMD python -c "import urllib.request, os; urllib.request.urlopen(f'http://localhost:{os.environ.get(\"PORT\", 8080)}/health').read()" || exit 1
 
-# Run with gunicorn
-# Use shell form to allow environment variable expansion
-CMD gunicorn -w 4 -b 0.0.0.0:$PORT --timeout 120 --access-logfile - --error-logfile - run:app
+# Run with gunicorn using config file (avoids $PORT shell expansion issues)
+CMD ["gunicorn", "-c", "gunicorn.conf.py", "run:app"]
